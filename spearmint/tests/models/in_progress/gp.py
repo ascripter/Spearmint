@@ -182,6 +182,10 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from past.utils import old_div
 import sys
 import os
 import ast
@@ -221,7 +225,7 @@ class DiagnosticGP(GP):
     # https://hips.seas.harvard.edu/blog/2013/06/10/testing-mcmc-code-part-2-integration-tests/
     # This test uses an arbitrary statistic of the data (outputs). Here we use the sum.
     def geweke_correctness_test(self):
-        print 'Initiating Geweke Correctness test'
+        print('Initiating Geweke Correctness test')
         # Note: the horseshoe prior on the noise will make the line slightly not straight
         # because we don't have the actual log pdf
 
@@ -230,7 +234,7 @@ class DiagnosticGP(GP):
         # First, check that all priors and models can be sampled from
         for param in self.hypers:
             if not hasattr(param.prior, 'sample'):
-                print 'Prior of param %s cannot be sampled from. Cannot perform the Geweke correctness test.' % param.name
+                print('Prior of param %s cannot be sampled from. Cannot perform the Geweke correctness test.' % param.name)
                 return
 
         n = 10000 # number of samples # n = self.mcmc_iters
@@ -242,9 +246,9 @@ class DiagnosticGP(GP):
             # 1) Draw new hypers from priors
             # 2) Draw new data given hypers (**NOT** given hypers and data !!!!)
         caseA = np.zeros(n)
-        for i in xrange(n):
+        for i in range(n):
             if i % 1000 == 0:
-                print 'Geweke Part A Sample %d/%d' % (i,n)
+                print('Geweke Part A Sample %d/%d' % (i,n))
             for param in self.hypers:
                 param.sample_from_prior()
             latent_y = self.sample_from_prior_given_hypers(self.data) # only inputs used
@@ -261,9 +265,9 @@ class DiagnosticGP(GP):
             # 2) Resample data given hypers
             # repeat a bunch of times
         caseB = np.zeros(n)
-        for i in xrange(n):
+        for i in range(n):
             if i % 1000 == 0:
-                print 'Geweke Part B Sample %d/%d' % (i,n)
+                print('Geweke Part B Sample %d/%d' % (i,n))
             # Take MCMC step on theta given data
             self.sampler.generate_sample() # data['inputs'] and data['values'] used
 
@@ -277,10 +281,10 @@ class DiagnosticGP(GP):
 
             caseB[i] = statistic_of_interest(self.data['values'])
         
-        print np.mean(caseA)
-        print np.std(caseA)
-        print np.mean(caseB)
-        print np.std(caseB)
+        print(np.mean(caseA))
+        print(np.std(caseA))
+        print(np.mean(caseB))
+        print(np.std(caseB))
 
         # Then, sort the sets A and B.
         caseA = np.sort(caseA)
@@ -288,10 +292,10 @@ class DiagnosticGP(GP):
 
         # Then for each a in A, take the fraction of B smaller than it. 
         yAxis = np.zeros(n)
-        for i in xrange(n):
-            yAxis[i] = np.sum(caseB < caseA[i]) / float(n)
+        for i in range(n):
+            yAxis[i] = old_div(np.sum(caseB < caseA[i]), float(n))
 
-        xAxis = np.arange(n)/float(n)
+        xAxis = old_div(np.arange(n),float(n))
         # Plot fractional index of a vs this fraction. 
         # Repeat for all a in A so number of points on graph is |A| ( = |B| )
 

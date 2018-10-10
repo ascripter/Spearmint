@@ -183,8 +183,11 @@
 # its Institution.
 
 
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
-import scipy.weave
+import weave
 from scipy.spatial.distance import cdist
 
 def dist2(ls, x1, x2=None):
@@ -195,13 +198,13 @@ def dist2(ls, x1, x2=None):
         # Find distance with self for x1.
 
         # Rescale.
-        xx1 = x1 / ls        
+        xx1 = old_div(x1, ls)        
         xx2 = xx1
 
     else:
         # Rescale.
-        xx1 = x1 / ls
-        xx2 = x2 / ls
+        xx1 = old_div(x1, ls)
+        xx2 = old_div(x2, ls)
     
     r2 = cdist(xx1,xx2,'sqeuclidean')
 
@@ -212,8 +215,8 @@ def grad_dist2(ls, x1, x2=None):
         x2 = x1
         
     # Rescale.
-    x1 = x1 / ls
-    x2 = x2 / ls
+    x1 = old_div(x1, ls)
+    x2 = old_div(x2, ls)
     
     N = x1.shape[0]
     M = x2.shape[0]
@@ -228,13 +231,13 @@ def grad_dist2(ls, x1, x2=None):
           gX(i,j,d) = (2/ls(d))*(x1(i,d) - x2(j,d));
     """
     try:
-        scipy.weave.inline(code, ['x1','x2','gX','ls','M','N','D'], \
-                           type_converters=scipy.weave.converters.blitz, \
+        weave.inline(code, ['x1','x2','gX','ls','M','N','D'], \
+                           type_converters=weave.converters.blitz, \
                            compiler='gcc')
     except:
     # The C code weave above is 10x faster than this:
-        for i in xrange(0,x1.shape[0]):
-            gX[i,:,:] = 2*(x1[i,:] - x2[:,:])*(1/ls)
+        for i in range(0,x1.shape[0]):
+            gX[i,:,:] = 2*(x1[i,:] - x2[:,:])*(old_div(1,ls))
 
     return gX
 

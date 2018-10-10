@@ -183,8 +183,11 @@
 # its Institution.
 
 
+from __future__ import division
+from __future__ import absolute_import
+from past.utils import old_div
 import numpy as np
-import kernel_utils
+from . import kernel_utils
 
 from .abstract_kernel import AbstractKernel
 from ..utils          import priors
@@ -222,7 +225,7 @@ class Matern52(AbstractKernel):
     def cross_cov(self, inputs_1, inputs_2):
         r2  = np.abs(kernel_utils.dist2(self.ls.value, inputs_1, inputs_2))
         r   = np.sqrt(r2)
-        cov = (1.0 + SQRT_5*r + (5.0/3.0)*r2) * np.exp(-SQRT_5*r)
+        cov = (1.0 + SQRT_5*r + (old_div(5.0,3.0))*r2) * np.exp(-SQRT_5*r)
 
         return cov
 
@@ -231,7 +234,7 @@ class Matern52(AbstractKernel):
         # The gradient wrt the inputs of inputs_1 is -1 times this
         r2      = np.abs(kernel_utils.dist2(self.ls.value, inputs_1, inputs_2))
         r       = np.sqrt(r2)
-        grad_r2 = (5.0/6.0)*np.exp(-SQRT_5*r)*(1 + SQRT_5*r)
+        grad_r2 = (old_div(5.0,6.0))*np.exp(-SQRT_5*r)*(1 + SQRT_5*r)
 
         return grad_r2[:,:,np.newaxis] * kernel_utils.grad_dist2(self.ls.value, inputs_1, inputs_2)
 

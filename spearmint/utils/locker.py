@@ -184,6 +184,7 @@
 
 
 
+from builtins import object
 import os
 import sys
 import time
@@ -201,7 +202,7 @@ def safe_delete(filename):
     #fail = os.system(cmd)
     #return not fail
 
-class Locker:
+class Locker(object):
 
     def __init__(self):
         self.locks = {}
@@ -213,12 +214,12 @@ class Locker:
         self.clear_locks()
 
     def clear_locks(self):
-        for filename in self.locks.keys():
+        for filename in list(self.locks.keys()):
             self.locks[filename] = 1
             self.unlock(filename)
 
     def lock(self, filename):
-        if self.locks.has_key(filename):
+        if filename in self.locks:
             self.locks[filename] += 1
             return True
         else:
@@ -246,7 +247,7 @@ class Locker:
     #        return not fail
 
     def unlock(self, filename):
-        if not self.locks.has_key(filename):
+        if filename not in self.locks:
             sys.stderr.write("Trying to unlock not-locked file %s.\n" % 
                              (filename))
             return True

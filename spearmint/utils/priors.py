@@ -182,18 +182,20 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from past.utils import old_div
+from builtins import object
 from abc import ABCMeta, abstractmethod
 import numpy as np
 import numpy.random as npr
 import scipy.stats as sps
 from operator import add # same as lambda x,y:x+y I think
+from future.utils import with_metaclass
 # import scipy.special.gammaln as log_gamma
 
 
 
-class AbstractPrior(object):
-    __metaclass__ = ABCMeta
-
+class AbstractPrior(with_metaclass(ABCMeta, object)):
     @abstractmethod
     def logprob(self, x):
         pass
@@ -241,7 +243,7 @@ class Horseshoe(AbstractPrior):
         # We don't actually have an analytical form for this
         # But we have a bound between 2 and 4, so I just use 3.....
         # (or am I wrong and for the univariate case we have it analytically?)
-        return np.sum(np.log(np.log(1 + 3.0 * (self.scale/x)**2) ) )
+        return np.sum(np.log(np.log(1 + 3.0 * (old_div(self.scale,x))**2) ) )
 
     def sample(self, n_samples):
         # Sample from standard half-cauchy distribution

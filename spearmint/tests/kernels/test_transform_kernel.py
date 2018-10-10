@@ -182,6 +182,9 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy        as np
 import numpy.random as npr
 
@@ -214,14 +217,14 @@ def test_grad():
     dloss = kernel.cross_cov_grad_data(data1, data2).sum(0)
     
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(M):
-        for j in xrange(D):
+    for i in range(M):
+        for j in range(D):
             data2[i,j] += eps
             loss_1 = np.sum(kernel.cross_cov(data1, data2))
             data2[i,j] -= 2*eps
             loss_2 = np.sum(kernel.cross_cov(data1, data2))
             data2[i,j] += eps
-            dloss_est[i,j] = ((loss_1 - loss_2) / (2*eps))
+            dloss_est[i,j] = (old_div((loss_1 - loss_2), (2*eps)))
 
     assert np.linalg.norm(dloss - dloss_est) < 1e-6
 

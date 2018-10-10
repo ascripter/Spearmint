@@ -182,6 +182,9 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy        as np
 import numpy.random as npr
 
@@ -206,7 +209,7 @@ def test_fit():
     gp.fit(inputs, vals, pending)
 
     assert gp.chain_length == 15
-    assert all([np.all(p.value != p.initial_value) for p in gp.params.values()])
+    assert all([np.all(p.value != p.initial_value) for p in list(gp.params.values())])
     assert len(gp._cache_list) == 10
     assert len(gp._hypers_list) == 10
     assert len(gp._fantasy_values_list) == 10
@@ -264,8 +267,8 @@ def test_predict():
     dloss = 2*(dmu*mu[:,np.newaxis,:]).sum(2) + 2*(v[:,np.newaxis,np.newaxis]*dv).sum(2)
 
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(Ntest):
-        for j in xrange(D):
+    for i in range(Ntest):
+        for j in range(D):
             pred[i,j] += eps
             mu, v = gp.predict(pred)
             loss_1 = np.sum(mu**2) + np.sum(v**2)
@@ -273,7 +276,7 @@ def test_predict():
             mu, v = gp.predict(pred)
             loss_2 = np.sum(mu**2) + np.sum(v**2)
             pred[i,j] += eps
-            dloss_est[i,j] = ((loss_1 - loss_2) / (2*eps))
+            dloss_est[i,j] = (old_div((loss_1 - loss_2), (2*eps)))
 
     assert np.linalg.norm(dloss - dloss_est) < 1e-6
 

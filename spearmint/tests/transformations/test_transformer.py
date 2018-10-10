@@ -182,6 +182,9 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy        as np
 import numpy.random as npr
 
@@ -305,14 +308,14 @@ def test_backward_pass():
     dloss = t.backward_pass(V)
     
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(N):
-        for j in xrange(D):
+    for i in range(N):
+        for j in range(D):
             data[i,j] += eps
             loss_1 = np.sum(t.forward_pass(data)**2)
             data[i,j] -= 2*eps
             loss_2 = np.sum(t.forward_pass(data)**2)
             data[i,j] += eps
-            dloss_est[i,j] = ((loss_1 - loss_2) / (2*eps))
+            dloss_est[i,j] = (old_div((loss_1 - loss_2), (2*eps)))
 
     assert np.linalg.norm(dloss - dloss_est) < 1e-6
 
@@ -326,14 +329,14 @@ def test_backward_pass():
     dloss = t.backward_pass(V)
     
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(N):
-        for j in xrange(D):
+    for i in range(N):
+        for j in range(D):
             data[i,j] += eps
             loss_1 = np.sum(t.forward_pass(data)**2)
             data[i,j] -= 2*eps
             loss_2 = np.sum(t.forward_pass(data)**2)
             data[i,j] += eps
-            dloss_est[i,j] = ((loss_1 - loss_2) / (2*eps))
+            dloss_est[i,j] = (old_div((loss_1 - loss_2), (2*eps)))
 
     assert np.linalg.norm(dloss - dloss_est) < 1e-6
 
@@ -405,5 +408,5 @@ def test_add_layer():
 
     output_inds = t.add_layer(st3)
     assert len(t.layer_transformations) == 2
-    assert output_inds == range(10)
+    assert output_inds == list(range(10))
 

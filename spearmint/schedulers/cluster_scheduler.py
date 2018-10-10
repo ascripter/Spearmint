@@ -182,6 +182,8 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from builtins import str
+from builtins import object
 import spearmint
 import os
 import subprocess
@@ -190,13 +192,12 @@ import socket
 import re
 import shlex
 from abc import ABCMeta, abstractmethod
+from future.utils import with_metaclass
 
 def init(*args, **kwargs):
     return AbstractClusterScheduler(*args, **kwargs)
 
-class AbstractClusterScheduler(object):
-    __metaclass__ = ABCMeta
-    
+class AbstractClusterScheduler(with_metaclass(ABCMeta, object)):
     def __init__(self, options):
         self.options = options
     

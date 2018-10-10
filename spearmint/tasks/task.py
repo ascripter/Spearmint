@@ -183,6 +183,8 @@
 # its Institution.
 
 
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 
 from .base_task import BaseTask
@@ -298,7 +300,7 @@ class Task(BaseTask):
 
         self.standardization_variance = y_std
 
-        return y / y_std
+        return old_div(y, y_std)
 
     def unstandardize_mean(self, y):
         if self.standardization_mean is None:

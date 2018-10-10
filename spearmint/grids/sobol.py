@@ -182,8 +182,13 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from past.utils import old_div
 import numpy as np
-import cPickle as pickle
+import pickle as pickle
 
 # Numba autojit might be nice.  Currently asplodes.
 def sobol(num_points, num_dims):
@@ -209,7 +214,7 @@ def sobol(num_points, num_dims):
     params = get_params()
 
     # Loop over dimensions
-    for dd in xrange(1,num_dims):
+    for dd in range(1,num_dims):
         s = params[dd-1]['s']
         a = params[dd-1]['a']
         m = params[dd-1]['m']
@@ -219,24 +224,24 @@ def sobol(num_points, num_dims):
             V[dd,:] = m << np.arange(31, 31-num_bits, -1, dtype=np.uint32)
         else:
             V[dd,:s] = m << np.arange(31, 31-s, -1, dtype=np.uint32)
-            for s0 in xrange(s, num_bits):
+            for s0 in range(s, num_bits):
                 V[dd,s0] = V[dd,s0-s] ^ (V[dd,s0-s] >> s)
-                for s1 in xrange(s-1):
+                for s1 in range(s-1):
                     V[dd,s0] = V[dd,s0] ^ (((a >> (s-2-s1)) & 1) * V[dd,s0-s1-1])
 
     X = np.zeros((num_points, num_dims), dtype=np.uint32)
 
     # Wish we could do this without recursion.
     # Fancy loop unrolling?
-    for nn in xrange(1,num_points):
+    for nn in range(1,num_points):
         X[nn,:] = X[nn-1,:] ^ V[:,C[nn-1]-1]
 
-    Z = X.astype('double') / float(1<<32)
+    Z = old_div(X.astype('double'), float(1<<32))
 
     return Z
 
 def to_binary(X, bits):
-    return 1 & (X[:,np.newaxis]/2**np.arange(bits-1,-1,-1, dtype=np.uint32))
+    return 1 & (old_div(X[:,np.newaxis],2**np.arange(bits-1,-1,-1, dtype=np.uint32)))
 
 # These are the parameters for the Sobol sequence.
 # This is hilarious.

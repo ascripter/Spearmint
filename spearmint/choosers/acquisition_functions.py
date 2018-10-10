@@ -183,6 +183,10 @@
 # its Institution.
 
 
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from past.utils import old_div
 import os
 import tempfile
 import copy
@@ -191,7 +195,7 @@ import numpy.random   as npr
 import scipy.linalg   as spla
 import scipy.stats    as sps
 import scipy.optimize as spo
-import cPickle
+import pickle
 import multiprocessing
 import ast
 
@@ -227,7 +231,7 @@ def compute_ei(model, pred, ei_target=None, compute_grad=True):
 
     # Expected improvement
     func_s = np.sqrt(func_v)
-    u      = (ei_values - func_m) / func_s
+    u      = old_div((ei_values - func_m), func_s)
     ncdf   = sps.norm.cdf(u)
     npdf   = sps.norm.pdf(u)
     ei     = np.mean(func_s*( u*ncdf + npdf),axis=1)

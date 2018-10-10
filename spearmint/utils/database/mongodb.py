@@ -182,12 +182,13 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import absolute_import
 import sys
 import time
 import pymongo
 import numpy.random as npr
 
-from abstractdb                  import AbstractDB
+from .abstractdb                  import AbstractDB
 from spearmint.utils.compression import compress_nested_container, decompress_nested_container
 
 class MongoDB(AbstractDB):

@@ -183,6 +183,8 @@
 # its Institution.
 
 
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 
 from .abstract_transformation import AbstractTransformation
@@ -194,7 +196,7 @@ class Linear(AbstractTransformation):
     def __init__(self, num_dims, weights=None, num_factors=2, name="Linear"):
         self.name        = name
         self.num_dims    = num_dims
-        self.num_factors = num_factors if not weights else int(weights.shape[0] / num_dims)
+        self.num_factors = num_factors if not weights else int(old_div(weights.shape[0], num_dims))
 
         if weights:
             assert self.num_factors*self.num_dims == weights.shape[0]

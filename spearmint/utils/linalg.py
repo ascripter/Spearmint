@@ -183,6 +183,9 @@
 # its Institution.
 
 
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import scipy.weave
 import scipy.linalg as spla
@@ -242,7 +245,7 @@ def fast_chol_add(L, A):
                                compiler='gcc')
     except:
         k = np.arange(cols)
-        for i in xrange(cols):
+        for i in range(cols):
             j = rows-1;
             s = A[i,j] - np.dot(U[k[:i],i].T,U[k[:i],j])
             if i == j:
@@ -253,7 +256,7 @@ def fast_chol_add(L, A):
                     U[i,i] = np.sqrt(s)
             else:
                 if U[i,i] > 0:
-                    U[i,j] = s / U[i,i]
+                    U[i,j] = old_div(s, U[i,i])
                 else:
                     U[i,j] = 0
 

@@ -183,11 +183,11 @@
 # its Institution.
 
 
+from builtins import object
 from abc import ABCMeta, abstractmethod
+from future.utils import with_metaclass
 
-class AbstractScheduler(object):
-    __metaclass__ = ABCMeta
-
+class AbstractScheduler(with_metaclass(ABCMeta, object)):
     def __init__(self, options):
         self.options = options
         

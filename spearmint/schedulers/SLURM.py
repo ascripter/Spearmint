@@ -182,8 +182,9 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import absolute_import
 import spearmint
-from cluster_scheduler import AbstractClusterScheduler
+from .cluster_scheduler import AbstractClusterScheduler
 
 def init(*args, **kwargs):
     return SLURMScheduler(*args, **kwargs)

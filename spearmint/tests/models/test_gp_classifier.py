@@ -182,6 +182,9 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy        as np
 import numpy.random as npr
 
@@ -211,9 +214,9 @@ def test_fit():
     gp.fit(inputs, vals, pending)
 
     probs = np.zeros(inputs.shape[0])
-    for i in xrange(gp.num_states):
+    for i in range(gp.num_states):
         gp.set_state(i)
-        probs += (gp.latent_values.value > 0) / float(mcmc_iters)
+        probs += old_div((gp.latent_values.value > 0), float(mcmc_iters))
 
     assert np.all(probs[:N] < 0.5) and np.all(probs[N:] > 0.5)
 
@@ -222,7 +225,7 @@ def test_fit():
     assert gp.values.shape[1] == 2
 
     assert gp.chain_length == burnin + mcmc_iters
-    assert all([np.all(p.value != p.initial_value) for p in gp.params.values()])
+    assert all([np.all(p.value != p.initial_value) for p in list(gp.params.values())])
     assert len(gp._cache_list) == mcmc_iters
     assert len(gp._hypers_list) == mcmc_iters
     assert len(gp._latent_values_list) == mcmc_iters
@@ -275,8 +278,8 @@ def test_predict():
     dloss = 2*(dmu*mu[:,np.newaxis,:]).sum(2) + 2*(v[:,np.newaxis,np.newaxis]*dv).sum(2)
 
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(Ntest):
-        for j in xrange(D):
+    for i in range(Ntest):
+        for j in range(D):
             pred[i,j] += eps
             mu, v = gp.predict(pred)
             loss_1 = np.sum(mu**2) + np.sum(v**2)
@@ -284,6 +287,6 @@ def test_predict():
             mu, v = gp.predict(pred)
             loss_2 = np.sum(mu**2) + np.sum(v**2)
             pred[i,j] += eps
-            dloss_est[i,j] = ((loss_1 - loss_2) / (2*eps))
+            dloss_est[i,j] = (old_div((loss_1 - loss_2), (2*eps)))
 
     assert np.linalg.norm(dloss - dloss_est) < 1e-5

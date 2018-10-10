@@ -186,17 +186,22 @@
 
 # Product covariance.  This covariance (kernel) is the elementwise product
 # of multiple different covariance functions.
+from __future__ import division
+from __future__ import absolute_import
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import sys
 import numpy as np
 import priors
-import kernel_utils
+from . import kernel_utils
 import scipy.stats as sps
 import warnings
 import scipy.special as spe
 import logging
 #warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-class productCov:
+class productCov(object):
     def __init__(self, num_dimensions, **kwargs):
         # The sub-covariances of which this is the elementwise product
         self.kernels = kwargs.get('kernels', list())
@@ -217,7 +222,7 @@ class productCov:
             Ks = list()
             dKs = list()
             cov_grad = np.zeros((x1.shape[0], 1, x2.shape[1]))
-            for i in xrange(len(self.kernels)):
+            for i in range(len(self.kernels)):
                 (K, dK) = self.kernels[i].kernel(x1[:,self.dim_indices[i]],
                                                  x2[:,self.dim_indices[i]],
                                                  grad)
@@ -225,12 +230,12 @@ class productCov:
                 dKs.append(dK)
                 cov = cov * K
 
-            for i in xrange(len(self.kernels)):
+            for i in range(len(self.kernels)):
                 cov_grad[:, :, self.dim_indices[i]] = (cov_grad[:, :, self.dim_indices[i]] +
-                                                       dKs[i] * (cov / Ks[i])[:,:,np.newaxis])
+                                                       dKs[i] * (old_div(cov, Ks[i]))[:,:,np.newaxis])
             return (cov, cov_grad)
         else:
-            for i in xrange(len(self.kernels)):
+            for i in range(len(self.kernels)):
                 cov = cov * self.kernels[i].kernel(x1[:,self.dim_indices[i]],
                                                    x2[:,self.dim_indices[i]],
                                                    grad)

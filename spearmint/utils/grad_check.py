@@ -183,6 +183,10 @@
 # its Institution.
 
 
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import re
 import numpy        as np
 import numpy.random as npr
@@ -218,7 +222,7 @@ def check_grad(fun, test_x, error_tol=1e-3, delta=1e-5, verbose=False, fun_args=
         forward_val = fun(test_x + unit_vector, *fun_args)[0]
         npr.seed(fixed_seed)
         backward_val = fun(test_x - unit_vector, *fun_args)[0]
-        grad_check_i = (forward_val - backward_val)/(2*delta)
+        grad_check_i = old_div((forward_val - backward_val),(2*delta))
         if test_x.ndim > 1:
             grad_check[:,i] = grad_check_i
         else:

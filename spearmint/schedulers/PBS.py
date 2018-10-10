@@ -182,9 +182,11 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import absolute_import
+from builtins import str
 import sys
 import spearmint
-from cluster_scheduler import AbstractClusterScheduler
+from .cluster_scheduler import AbstractClusterScheduler
 # Torque PBS scheduler python code from: https://oss.trac.surfsara.nl/pbs_python/
 import pbs
 from PBSQuery import PBSQuery

@@ -182,13 +182,13 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from builtins import object
 import numpy as np
 
 from abc import ABCMeta, abstractmethod
+from future.utils import with_metaclass
 
-class AbstractKernel(object):
-    __metaclass__ = ABCMeta
-
+class AbstractKernel(with_metaclass(ABCMeta, object)):
     @property
     def hypers(self):
         return None

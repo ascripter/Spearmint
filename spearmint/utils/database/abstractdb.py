@@ -183,11 +183,11 @@
 # its Institution.
 
 
+from builtins import object
 from abc import ABCMeta, abstractmethod
+from future.utils import with_metaclass
 
-class AbstractDB(object):
-    __metaclass__ = ABCMeta
-
+class AbstractDB(with_metaclass(ABCMeta, object)):
     @abstractmethod
     def save(self, collection_name):
         pass

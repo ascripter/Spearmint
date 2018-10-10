@@ -182,6 +182,9 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 
 from collections          import OrderedDict
@@ -210,8 +213,8 @@ def create_task():
 
     # Create a set of inputs that satisfies the constraints of each variable
     X = np.zeros((10,num_dims))
-    for i in xrange(10):
-        for name, variable in variables_meta.iteritems():
+    for i in range(10):
+        for name, variable in variables_meta.items():
             indices = variable['indices']
             if variable['type'] == 'int':
                 X[i,indices] = np.random.randint(variable['min'], variable['max']+1, len(indices))
@@ -244,7 +247,7 @@ def test_standardization():
 
     ystandard = t.standardized_values
 
-    assert np.all(ystandard == (y - ymean) / ystd)
+    assert np.all(ystandard == old_div((y - ymean), ystd))
     assert np.abs(ystandard.mean()) < 1e-15
     assert ystandard.std() > (1 - 1e-15) and ystandard.std() < (1 + 1e-15)
 

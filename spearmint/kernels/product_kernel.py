@@ -183,9 +183,12 @@
 # its Institution.
 
 
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 
 from .abstract_kernel import AbstractKernel
+from functools import reduce
 
 
 class ProductKernel(AbstractKernel):
@@ -210,4 +213,4 @@ class ProductKernel(AbstractKernel):
         grads = np.array([kernel.cross_cov_grad_data(inputs_1,inputs_2) for kernel in self.kernels])
         V     = vals == 0
 
-        return (((vprod[:,:,np.newaxis]*grads) / (vals + V)[:,:,:,np.newaxis]) + (V[:,:,:,np.newaxis]*grads)).sum(0)
+        return ((old_div((vprod[:,:,np.newaxis]*grads), (vals + V)[:,:,:,np.newaxis])) + (V[:,:,:,np.newaxis]*grads)).sum(0)

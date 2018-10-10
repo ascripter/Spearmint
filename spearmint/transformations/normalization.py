@@ -183,6 +183,8 @@
 # its Institution.
 
 
+from __future__ import division
+from past.utils import old_div
 import warnings
 import numpy as np
 
@@ -215,13 +217,13 @@ class Normalization(AbstractTransformation):
     def forward_pass(self, inputs):
         self._inputs = inputs
 
-        return (inputs+EPSILON) / (inputs+EPSILON).sum(1)[:,None]
+        return old_div((inputs+EPSILON), (inputs+EPSILON).sum(1)[:,None])
 
     def backward_pass(self, V):
         s = (self._inputs+EPSILON).sum(1)
         if V.ndim == 2:
-            return V/s[:,None] - (((self._inputs+EPSILON)*V).sum(1)/(s**2))[:,None]
+            return old_div(V,s[:,None]) - (old_div(((self._inputs+EPSILON)*V).sum(1),(s**2)))[:,None]
         elif V.ndim == 3:
-            return V/s[np.newaxis,:,np.newaxis,] - (((self._inputs+EPSILON)*V).sum(-1)/(s[np.newaxis,:]**2))[:,:,np.newaxis]
+            return old_div(V,s[np.newaxis,:,np.newaxis,]) - (old_div(((self._inputs+EPSILON)*V).sum(-1),(s[np.newaxis,:]**2)))[:,:,np.newaxis]
 
 
