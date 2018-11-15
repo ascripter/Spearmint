@@ -48,4 +48,7 @@ Spearmint implements a combination of the algorithms detailed in the following p
 2. Run spearmint: `python main.py \</path/to/experiment/directory\>`
 
 **STEP 4: Looking at your results**  
-Spearmint will output results to standard out / standard err. You can also load the results from the database and manipulate them directly. 
+Spearmint will output results to standard out / standard err. You can also load the results from the database and manipulate them directly.
+
+####Comment on this fork
+This fork makes Spearmint run on python3 with scipy >= 1.0. At least it worked for me.
